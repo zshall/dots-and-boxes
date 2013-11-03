@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Dots and Boxes</title>
+        <script src="js/game-new.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="js/visuals.js"></script>
+        <link rel="stylesheet" href="css/site.css" />
+    </head>
+    <body>
+        <h1>Dots and Boxes</h1>
+        <div id="game"></div>
+        
+        <script>
+            $(document).ready(function () {
+                var board = Board(5,5);
+                DrawBoard(board);
+            });
+        </script>
+    </body>
+</html>
