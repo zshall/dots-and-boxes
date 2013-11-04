@@ -11,7 +11,7 @@
 // Constants
 var BOX_P1 = 'R';
 var BOX_P2 = 'B';
-var DOT = 'X';
+var DOT = '•';
 var LINE = '1';
 
 // Vendor Functions
@@ -48,24 +48,56 @@ function Board (x, y) {
     x = x * 2 + 1;
     y = y * 2 + 1;
     
-    var board = [];
-    var row = new Array(y);
+    var board = new Array(y);
+    var rowEven = new Array(x);
+    var rowOdd = new Array(x);
     
-    for (var i = 0; i < row.length; i += 2) {
-        row[i] = DOT;
+    for (var i = 0; i < rowEven.length; i += 2) {
+        rowEven[i] = DOT;
     }
     
-    for (var j = 0; j < x; j++) {
-        board.push(row.copy());
+    for (var k = 0; k < y; k+= 2) {
+        board[k] = rowEven.copy();
+    }
+    
+    for (var j = 1; j < y; j += 2) {
+        board[j] = rowOdd.copy();
     }
     
     return board;
 }
 
-function Connect (board, x, y) {
+function IsBox (board, x, y) {
+    // Given x and y coordinates, find if cardinal neighbors are connected
+    
+    if (board[y+1][x] && board[y-1][x] && board[y][x+1] && board[y][x-1])
+        return true;
+    else
+        return false;
+}
+
+function CheckBoardForNewBoxes (board, alliance) {
+    // For each box coordinate, color the box in if it's complete
+    
+    var moveMade = false;
+    
+    for (var i = 1; i < board.length; i += 2) {
+        for (var j = 1; j < board[0].length; j += 2) {
+            if (!board[i][j] && IsBox(board, j, i)) {
+                board[i][j] = alliance;
+                moveMade = true;
+            }
+        }
+    }
+    
+    return moveMade;
+}
+
+function Connect (board, x, y, alliance) {
     // Draws a line at coordinates [x, y]
     
-    board[x][y] = LINE;
+    board[y][x] = LINE;
+    return CheckBoardForNewBoxes(board, alliance);
 }
 
 function IsConnected (board, x1, y1, x2, y2) {
@@ -74,7 +106,7 @@ function IsConnected (board, x1, y1, x2, y2) {
     var midx = (x1 + x2) / 2;
     var midy = (y1 + y2) / 2;
     
-    return board[midx][midy];
+    return board[midy][midx];
 }
 
 function FindAllAvailableMoves (board) {
@@ -82,9 +114,9 @@ function FindAllAvailableMoves (board) {
     
     var moves = [];
     
-    for (var i = 1; i < board.length; i += 2) {
-        for (var j = 1; j < board[0].length; j += 2) {
-            if (!board[i][j])
+    for (var i = 1; i < board[0].length; i += 2) {
+        for (var j = 1; j < board.length; j += 2) {
+            if (!board[j][i])
                 moves.push([i,j]);
         }
     }
@@ -100,13 +132,13 @@ function FindNeighbors (board, x, y) {
     var maxIndexY = board[0].length--;
     
     if (x + 2 <= maxIndexX) {
-        neighbors.push(board[x+2][y]);
+        neighbors.push([x+2, y]);
         if (y + 2 <= maxIndexY) neighbors.push([x+2, y+2]);
         if (y - 2 >= 0) neighbors.push([x+2, y-2]);
     }
     
     if (x - 2 >= 0) {
-        neighbors.push(board[x-2][y]);
+        neighbors.push([x-2, y]);
         if (y + 2 <= maxIndexY) neighbors.push([x-2, y+2]);
         if (y - 2 >= 0) neighbors.push([x-2, y-2]);
     }
@@ -136,10 +168,10 @@ function CalculateScore (board) {
     
     var scores = [0, 0];
     
-    for (var i = 1; i < board.length; i += 2) {
-        for (var j = 1; j < board[0].length; j += 2) {
-            if (board[i][j] == BOX_P1) scores[0]++;
-            else if (board[i][j] == BOX_P2) scores[1]++;
+    for (var i = 1; i < board[0].length; i += 2) {
+        for (var j = 1; j < board.length; j += 2) {
+            if (board[j][i] == BOX_P1) scores[0]++;
+            else if (board[j][i] == BOX_P2) scores[1]++;
         }
     }
     

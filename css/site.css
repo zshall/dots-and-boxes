@@ -1,16 +1,36 @@
 body {
     font-family: sans-serif;
+    background-color: black;
+    color: white;
 }
 
 h1 {
     border-bottom: 2px black solid;
 }
 
-#game {
-    background-color: #b4b4b4;
+#board td {
+    width: 20px;
+    height: 10px;
+    text-align: center;
 }
 
-#board td {
-    width:20px;
-    height:10px;
+#board tr:nth-child(even) td:nth-child(odd).connected:before {
+    content: "|";
+}
+
+#board tr:nth-child(odd) td:nth-child(even).connected:before {
+    content: "—";
+}
+
+#board td.box1 {
+    background-color:blue;
+}
+
+#board td.box2 {
+    background-color:green;
+}
+
+#board tr:nth-child(odd) td:nth-child(even):hover,
+#board tr:nth-child(even) td:nth-child(odd):hover {
+    background-color: red;
 }
