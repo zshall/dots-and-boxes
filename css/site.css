@@ -19,7 +19,7 @@ h1 {
 }
 
 #board tr:nth-child(odd) td:nth-child(even).connected:before {
-    content: "—";
+    content: "\2014";
 }
 
 #board td.box1 {
@@ -30,7 +30,7 @@ h1 {
     background-color:green;
 }
 
-#board tr:nth-child(odd) td:nth-child(even):hover,
-#board tr:nth-child(even) td:nth-child(odd):hover {
+#board tr:nth-child(odd) td:nth-child(even):hover:not(.connected),
+#board tr:nth-child(even) td:nth-child(odd):hover:not(.connected) {
     background-color: red;
 }

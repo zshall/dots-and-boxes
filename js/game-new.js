@@ -115,6 +115,13 @@ function FindAllAvailableMoves (board) {
     var moves = [];
     
     for (var i = 1; i < board[0].length; i += 2) {
+        for (var j = 0; j < board.length; j += 2) {
+            if (!board[j][i])
+                moves.push([i,j]);
+        }
+    }
+	
+	for (var i = 0; i < board[0].length; i += 2) {
         for (var j = 1; j < board.length; j += 2) {
             if (!board[j][i])
                 moves.push([i,j]);
@@ -178,12 +185,12 @@ function CalculateScore (board) {
     return scores;
 }
 
-function AIRandom (board) {
+function AIRandom (board, alliance) {
     // Given a choice of all available moves, this AI takes a random one
     
     var moves = FindAllAvailableMoves(board);
     var move = moves.randomItem();
-    Connect(board, move[0], move[1]);
+    return Connect(board, move[0], move[1]);
 }
 
 function AIGreedy (board, alliance) {
@@ -192,6 +199,7 @@ function AIGreedy (board, alliance) {
     var moves = FindAllAvailableMoves(board);
     var score = CalculateScore(board);
     var moveMade = false;
+	var boxMade = false;
     
     for(var i = 0; i < moves.length; i++) {
         var newBoard = board.copy();
@@ -202,71 +210,21 @@ function AIGreedy (board, alliance) {
         var newScore = CalculateScore(newBoard);
         
         if (newScore > score) {
-            Connect(board, move[0], move[1]);
+            boxMade = Connect(board, move[0], move[1]);
             moveMade = true;
             break;
         }
     }
     
-    if (!moveMade) AIRandom(board);
+    if (!moveMade) boxMade = AIRandom(board, alliance);
+	
+	return boxMade;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+function AIMove (board, alliance, moveAlgorithm) {
+	// Continue making moves until AI's turn is up
+	var notDone = false;
+	do {
+		moveAlgorithm(board, alliance);
+	} while (notDone)
+}

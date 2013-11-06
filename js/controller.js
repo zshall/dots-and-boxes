@@ -28,8 +28,11 @@ $(document).ready(function () {
         
         if (!board[y][x]) {
             var boxMade = Connect(board, x, y, turn);
-            if (!boxMade)
+            if (!boxMade) {
                 FlipTurn();
+				AIMove(board, BOX_P2, AIRandom);
+				FlipTurn();
+			}
             DrawBoard(board);
         }
     });

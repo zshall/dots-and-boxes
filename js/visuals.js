@@ -37,7 +37,7 @@ function BoardHTML (board) {
                 else if (board[i][j] === BOX_P2)
                     html += '<td data-x="' + j + '" data-y="' + i + '" class="box2">&nbsp;</td>';
                 else
-                    html += '<td data-x="' + j + '" data-y="' + i + '">' + board[i][j] + '</td>';
+                    html += '<td data-x="' + j + '" data-y="' + i + '">&#9632;</td>';
             }
         }
         
