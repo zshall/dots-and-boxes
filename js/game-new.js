@@ -185,18 +185,16 @@ function CalculateScore (board) {
     return scores;
 }
 
-function AIRandom (board, alliance) {
+function AIRandom (board, alliance, moves) {
     // Given a choice of all available moves, this AI takes a random one
     
-    var moves = FindAllAvailableMoves(board);
     var move = moves.randomItem();
     return Connect(board, move[0], move[1], alliance);
 }
 
-function AIGreedy (board, alliance) {
+function AIGreedy (board, alliance, moves) {
     // This AI will move at random unless it finds a move that will increase its score
     
-    var moves = FindAllAvailableMoves(board);
     var score = CalculateScore(board);
     var moveMade = false;
 	var boxMade = false;
@@ -216,7 +214,7 @@ function AIGreedy (board, alliance) {
         }
     }
     
-    if (!moveMade) boxMade = AIRandom(board, alliance);
+    if (!moveMade) boxMade = AIRandom(board, alliance, moves);
 	
 	return boxMade;
 }
@@ -225,6 +223,8 @@ function AIMove (board, alliance, moveAlgorithm) {
 	// Continue making moves until AI's turn is up
 	var notDone = false;
 	do {
-		notDone = moveAlgorithm(board, alliance);
+        var moves = FindAllAvailableMoves(board);
+        if (moves.length === 0) break;
+		notDone = moveAlgorithm(board, alliance, moves);
 	} while (notDone);
 }
