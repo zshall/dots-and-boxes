@@ -1,4 +1,4 @@
-/*global $, LINE, BOX_P1, BOX_P2 */
+/*global $, LINE, BOX_P1, BOX_P2, CalculateScore */
 
 // This file requires jQuery 1.10 or later to run
 
@@ -45,6 +45,13 @@ function BoardHTML (board) {
     }
     
     html += '</table>';
+    
+    // Score table
+    var scores = CalculateScore(board);
+    html += '<div id="score"><table>';
+    html += '<tr class="s-one"><td>Your score:</td><td>' + scores[0] + '</td></tr>';
+    html += '<tr class="s-two"><td>My score:</td><td>' + scores[1] + '</td></tr>';
+    html += '</div>';
     
     return html;
 }
