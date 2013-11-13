@@ -36,10 +36,17 @@ Array.prototype.randomItem = function () {
     return this[Math.floor(Math.random()*this.length)];
 };
 
-Array.prototype.copy = function () {
-    // Stack Overflow: http://stackoverflow.com/a/7486130
-    return this.slice(0);
-};
+Array.prototype.copy = function() {
+    // Stack Overflow: http://stackoverflow.com/a/6082463
+    var arr = this.slice(0);
+    for( var i = 0; i < this.length; i++ ) {
+        if( this[i] && this[i].copy ) {
+            //recursion
+            arr[i] = this[i].copy();
+        }
+    }
+    return arr;
+}
 
 // Functions
 function Board (x, y) {
