@@ -1,4 +1,4 @@
-/*globals $, document, alert, Board, DrawBoard, Connect, IsConnected, BOX_P1, BOX_P2*/
+/*globals $, document, alert, Board, DrawBoard, Connect, IsConnected, BOX_P1, BOX_P2, AIMove, AIRandom*/
 // This file requires jQuery 1.10 or later to run
 
 // Globals
@@ -30,7 +30,8 @@ $(document).ready(function () {
             var boxMade = Connect(board, x, y, turn);
             if (!boxMade) {
                 FlipTurn();
-				AIMove(board, BOX_P2, AIRandom);
+				//AIMove(board, BOX_P2, AIRandom);
+                AIMove(board, BOX_P2, AIGreedy);
 				FlipTurn();
 			}
             DrawBoard(board);

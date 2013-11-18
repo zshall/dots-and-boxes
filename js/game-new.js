@@ -205,16 +205,19 @@ function AIGreedy (board, alliance, moves) {
     var score = CalculateScore(board);
     var moveMade = false;
 	var boxMade = false;
+    var a = 1;
+    
+    if (alliance == BOX_P1) a = 0;
     
     for(var i = 0; i < moves.length; i++) {
         var newBoard = board.copy();
         var move = moves[i];
         
-        Connect(newBoard, move[0], move[1]);
+        Connect(newBoard, move[0], move[1], alliance);
         
         var newScore = CalculateScore(newBoard);
         
-        if (newScore > score) {
+        if (newScore[a] > score[a]) {
             boxMade = Connect(board, move[0], move[1], alliance);
             moveMade = true;
             break;
