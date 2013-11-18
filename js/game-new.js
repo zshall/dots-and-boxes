@@ -39,14 +39,15 @@ Array.prototype.randomItem = function () {
 Array.prototype.copy = function() {
     // Stack Overflow: http://stackoverflow.com/a/6082463
     var arr = this.slice(0);
+    
     for( var i = 0; i < this.length; i++ ) {
         if( this[i] && this[i].copy ) {
-            //recursion
             arr[i] = this[i].copy();
         }
     }
+    
     return arr;
-}
+};
 
 // Functions
 function Board (x, y) {
@@ -192,8 +193,38 @@ function CalculateScore (board) {
     return scores;
 }
 
+function Score2 (oldScore, newScore, alliance, max) {
+    // Heuristic function that scores a score based on a set of rules.
+    
+    var v = 0;
+    var a = 1;
+    var oa;
+    
+    if (alliance == BOX_P1) a = 0;
+    if (a === 0) oa = 1;
+    else oa = 0;
+    
+    var opp = newScore[oa];
+    var you = newScore[a];
+    var oopp = oldScore[oa];
+    var oyou = oldScore[a];
+    
+    if (opp < you) v += 3;
+    if (oyou < you) v += 1;
+    if (oopp == opp) v += 2;
+    if (opp > you) v -= 2;
+    if (you == max) v += 1;
+    if (you == oyou && opp == oopp) v = 0;
+    
+    return v;
+}
+
 function AIRandom (board, alliance, moves) {
     // Given a choice of all available moves, this AI takes a random one
+    
+    // Algorithm notes:
+    // Wins: 0, losses: 10 (vs. me)
+    // Comments: this is a terrible AI. It does everything at random and is easily beatable.
     
     var move = moves.randomItem();
     return Connect(board, move[0], move[1], alliance);
@@ -201,6 +232,12 @@ function AIRandom (board, alliance, moves) {
 
 function AIGreedy (board, alliance, moves) {
     // This AI will move at random unless it finds a move that will increase its score
+    
+    // Algorithm notes:
+    // Wins: 0, losses: 4 (vs. Smart Dots)
+    /* Comments: this AI is only good if the opponent is moving entirely at random.
+                 If you wait long enough it will let you win because it moves at random
+                 if it can't find any moves that will immediately increase its score. */
     
     var score = CalculateScore(board);
     var moveMade = false;
@@ -227,6 +264,58 @@ function AIGreedy (board, alliance, moves) {
     if (!moveMade) boxMade = AIRandom(board, alliance, moves);
 	
 	return boxMade;
+}
+
+function AI2Ahead (board, alliance, moves) {
+    // Looks at each available move and the score directly following that move,
+    // using a genetic algorithm for the highest AI score and the lowest human score.
+    
+    var score = CalculateScore(board);
+    var bestH = -99;
+    var bestMoves;
+    
+    var candidates = [];
+    var max = 0;
+    
+    var a = 1;
+    var otherAlliance = BOX_P1;
+    var move;
+    
+    if (alliance == BOX_P1) {
+        a = 0;
+        otherAlliance = BOX_P2;
+    }
+    
+    for (var i = 0; i < moves.length; i++) {
+        var newBoard = board.copy();
+        move = moves[i];
+        
+        var boxMade = Connect(newBoard, move[0], move[1], alliance);
+        if (boxMade) AIMove(newBoard, alliance, AIGreedy);
+        AIMove(newBoard, otherAlliance, AIGreedy);
+        
+        candidates.push([CalculateScore(newBoard), move]);
+        
+        if (move[a] > max) max = move[a];
+    }
+    
+    for (var j = 0; j < candidates.length; j++) {
+        var h = Score2(score, candidates[j][0], alliance, max);
+        if (h > bestH) {
+            bestH = h;
+            bestMoves = [candidates[j][1]];
+        }
+        else if (h == bestH) {
+            bestMoves.push(candidates[j][1]);
+        }
+    }
+    
+    if (bestMoves) {
+        var bestMove = bestMoves.randomItem();
+        return Connect(board, bestMove[0], bestMove[1], alliance);
+    }
+    else
+        return AIRandom(board, alliance, moves);
 }
 
 function AIMove (board, alliance, moveAlgorithm) {
