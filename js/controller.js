@@ -14,7 +14,7 @@ function FlipTurn() {
 
 $(document).ready(function () {
     // Make a new board
-    board = Board(5, 5);
+    board = Board(5, 3);
     turn = BOX_P1;
     DrawBoard(board);
     
