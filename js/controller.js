@@ -12,9 +12,17 @@ function FlipTurn() {
         turn = BOX_P1;
 }
 
+function StartWaiting() {
+	$("body").addClass("wait");
+}
+
+function EndWaiting() {
+	$("body").removeClass("wait");
+}
+
 $(document).ready(function () {
     // Make a new board
-    board = Board(5, 3);
+    board = Board(5, 5);
     turn = BOX_P1;
     DrawBoard(board);
     
@@ -22,20 +30,23 @@ $(document).ready(function () {
     
     $(document).on('click', '#board tr:nth-child(odd) td:nth-child(even),#board tr:nth-child(even) td:nth-child(odd)', function() {
         // Mouse event for drawing an edge at a particular coordinate
-        
-        var x = $(this).data('x');
-        var y = $(this).data('y');
-        
-        if (!board[y][x]) {
-            var boxMade = Connect(board, x, y, turn);
-            if (!boxMade) {
-                FlipTurn();
-				//AIMove(board, BOX_P2, AIRandom);
-                //AIMove(board, BOX_P2, AIGreedy);
-                AIMove(board, BOX_P2, AI2Ahead);
-				FlipTurn();
+        StartWaiting();
+		var x = $(this).data('x');
+		var y = $(this).data('y');
+		setTimeout(function() {
+			
+			if (!board[y][x]) {
+				var boxMade = Connect(board, x, y, turn);
+				if (!boxMade) {
+					FlipTurn();
+					//AIMove(board, BOX_P2, AIRandom);
+					//AIMove(board, BOX_P2, AIGreedy);
+					AIMove(board, BOX_P2, AI2Ahead);
+					FlipTurn();
+				}
+				DrawBoard(board);
 			}
-            DrawBoard(board);
-        }
+			EndWaiting();
+		}, 1);
     });
 });
