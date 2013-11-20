@@ -196,7 +196,6 @@ function CalculateScore (board) {
 function Score2 (oldScore, newScore, alliance, max) {
     // Heuristic function that scores a score based on a set of rules.
     
-    var v = 0;
     var a = 1;
     var oa;
     
@@ -209,14 +208,7 @@ function Score2 (oldScore, newScore, alliance, max) {
     var oopp = oldScore[oa];
     var oyou = oldScore[a];
     
-    if (opp < you) v += 3;
-    if (oyou < you) v += 1;
-    if (oopp == opp) v += 2;
-    if (opp > you) v -= 2;
-    if (you == max) v += 1;
-    if (you == oyou && opp == oopp) v = 0;
-    
-    return v;
+    return (you - oyou) - (opp - oopp);
 }
 
 function AIRandom (board, alliance, moves) {
@@ -298,9 +290,12 @@ function AI2Ahead (board, alliance, moves) {
         
         if (move[a] > max) max = move[a];
     }
-    
+	
+    console.clear();
+	
     for (var j = 0; j < candidates.length; j++) {
         var h = Score2(score, candidates[j][0], alliance, max);
+		console.log(JSON.stringify(score) + '\t' + JSON.stringify(candidates[j][0]) + '\t' + JSON.stringify(candidates[j][1]) + '\t' + h);
         if (h > bestH) {
             bestH = h;
             bestMoves = [candidates[j][1]];
@@ -312,6 +307,7 @@ function AI2Ahead (board, alliance, moves) {
     
     if (bestMoves) {
         var bestMove = bestMoves.randomItem();
+		console.log(JSON.stringify(score) + '\t' + JSON.stringify(bestMoves) + '\t' + bestH);
         return Connect(board, bestMove[0], bestMove[1], alliance);
     }
     else
